@@ -32,11 +32,6 @@ def load_bitmap(filename):
     del rgb_data
     return bin_data
 
-app = wx.App()
-data = [numpy.array(load_bitmap(IMAGES_DIR + "\\" + image)) for image in OCR_TRAIN_SET]
-del app
-del wx
-
 def TrainOCR(network):
     digits = [int(image[0]) for image in OCR_TRAIN_SET]
     expected_results = []
@@ -55,6 +50,10 @@ def TrainOCR(network):
             break
 
 def main():
+    app = wx.App()    
+    data = [numpy.array(load_bitmap(IMAGES_DIR + "\\" + image)) for image in OCR_TRAIN_SET]
+    del app
+    
     for datum in data:
         print datum
     #nnw = neural.BP_NeuralNetwork(IMAGE_WIDTH * IMAGE_HEIGHT, 50, DIGITS)
