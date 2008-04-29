@@ -10,6 +10,10 @@ import wx
 
 # end wxGlade
 
+# Constants and definitions
+## Frame size
+WINDOW_SIZE = wx.Size(473, 375)
+
 #Exceptions specification
 class MultipleFilesException(Exception):
     pass
@@ -29,11 +33,33 @@ def ConvertRgb2BinData(rgb_data):
             pixel = TRUE
         bin_data.append(pixel)      
         return bin_data
+
+def RescaleBitmap(bitmap, wndSize):
+    heightWidthRatio = bitmap.GetHeight().__float__() /  bitmap.GetWidth() 
+    image = bitmap.ConvertToImage()
+    
+    if (wndSize.GetWidth() / bitmap.GetWidth()) > (wndSize.GetHeight() / bitmap.GetHeight()):
+        newHeight = bitmap.GetHeight() * wndSize.GetHeight().__float__() / bitmap.GetHeight()
+        newWidth = newHeight.__float__() / heightWidthRatio
+    else:
+        newWidth = bitmap.GetWidth() * wndSize.GetWidth().__float__() / bitmap.GetWidth()
+        newHeight = newWidth.__float__() * heightWidthRatio   
         
+    image.Rescale(newWidth, newHeight)
+    bitmap = image.ConvertToBitmap()
+    return bitmap
+
+## Description: Show a bitmap in the window
+def ShowBitmapInWindow(bmpFile, window):
+    bitmap = wx.Bitmap(bmpFile)
+    bitmap = RescaleBitmapToWindowSize(bitmap, window.GetSize())
+    dc = wx.ClientDC(window)
+    dc.DrawBitmap(bitmap, 0, 0)
+
 ## Handles a dropped Bitmap
-def LoadBitmap():
-    bitmap = wx.Image(filenames[0], wx.BITMAP_TYPE_BMP)
-    rgb_data = bmp.GetData()
+def LoadBitmap(bmpFile):
+    bitmap = wx.Image(bmpFile, wx.BITMAP_TYPE_BMP)
+    rgb_data = bitmap.GetData()
     
 
 ## File drag n' drop handler class
@@ -45,7 +71,8 @@ class FileDrop(wx.FileDropTarget):
         try:
             if len(filenames) > 1:
                 raise MultipleFilesException()
-            LoadBitmap()
+            LoadBitmap(filenames[0])
+            ShowBitmapInWindow(filenames[0], self.window)
         except MultipleFilesException:
             dlg = wx.MessageDialog(None, 'One file at a time please.')
             dlg.ShowModal()
