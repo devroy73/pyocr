@@ -9,7 +9,7 @@ class MyApp(wx.App):
     def OnInit(self):
         wx.InitAllImageHandlers()
         frame_1 = MainFrame(None, -1, "")
-        self.SetTopWindow(frame_1)
+        self.SetTopWindow(frame_1) 
         frame_1.Show()
         return 1
 
