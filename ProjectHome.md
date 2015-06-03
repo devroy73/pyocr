@@ -1,0 +1,1 @@
+A simple handwritten character recognition program, coded in Python. The recognition algorithm uses an artificial neural network.
